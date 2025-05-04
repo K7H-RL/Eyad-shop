@@ -1,0 +1,152 @@
+/* إعدادات عامة */
+body {
+    font-family: 'Cairo', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #fff;
+    color: #333;
+}
+
+header {
+    background: #222;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    font-size: 24px;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 100;
+}
+
+.menu-btn {
+    position: fixed;
+    top: 18px;
+    left: 20px;
+    font-size: 26px;
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    z-index: 150;
+}
+
+.menu {
+    position: fixed;
+    top: 0;
+    left: -220px;
+    width: 200px;
+    height: 100%;
+    background: #333;
+    padding-top: 60px;
+    display: flex;
+    flex-direction: column;
+    transition: left 0.3s ease;
+    z-index: 120;
+}
+
+.menu.open {
+    left: 0;
+}
+
+.menu a {
+    color: white;
+    padding: 15px;
+    text-decoration: none;
+    font-size: 18px;
+    transition: background 0.3s;
+}
+
+.menu a:hover {
+    background: #555;
+}
+
+.store-description, .products, .cart, .contact, .add-product, .orders {
+    padding: 80px 20px 20px;
+    text-align: center;
+    margin: 20px;
+    background: #f7f7f7;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    animation: fadeIn 0.5s ease;
+}
+
+.product-card {
+    width: 250px;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    margin: 10px auto;
+    transition: transform 0.3s;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+}
+
+.product-card .content {
+    padding: 15px;
+}
+
+.product-card .name {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.product-card .price {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.add-to-cart-btn {
+    background: #222;
+    color: white;
+    border: none;
+    padding: 10px;
+    width: 100%;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.add-to-cart-btn.added {
+    background: green;
+}
+
+.add-to-cart-btn.added:hover {
+    background: darkgreen;
+}
+
+#confirmOrderBtn {
+    background: #222;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s, transform 0.2s;
+}
+
+#confirmOrderBtn:hover {
+    background: #444;
+    transform: scale(1.05);
+}
+
+input {
+    padding: 10px;
+    margin: 5px;
+    width: 200px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+button {
+    cursor: pointer;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
