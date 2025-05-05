@@ -35,6 +35,20 @@
 <div id="homeSection" class="store-description">
     <h2>Welcome to Nitro Store</h2>
     <p>متجرنا يقدم لك أفضل المنتجات عبر الإنترنت بكل سهولة!</p>
+    <!-- زر الانتقال للمنتجات -->
+    <button id="goToProductsBtn" style="
+        background-color: #333;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        font-size: 16px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        cursor: pointer;
+        transition: transform 0.2s;
+    ">
+        استعرض المنتجات
+    </button>
 </div>
 
 <div id="productsSection" class="products" style="display:none;">
@@ -102,6 +116,10 @@
     productsLink.addEventListener('click', () => showSection('products'));
     cartLink.addEventListener('click', () => showSection('cart'));
     contactLink.addEventListener('click', () => showSection('contact'));
+
+    // الزر الجديد
+    const goToProductsBtn = document.getElementById('goToProductsBtn');
+    goToProductsBtn.addEventListener('click', () => showSection('products'));
 
     function showSection(section) {
         homeSection.style.display = section === 'home' ? 'block' : 'none';
