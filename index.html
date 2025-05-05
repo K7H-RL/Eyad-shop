@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nitro Store</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js"></script>
+</head>
+<body>
+<header>Nitro Store</header>
+<button class="menu-btn" id="menuBtn">☰</button>
+
+<nav class="menu" id="menu">
+    <a href="#" id="homeLink">الرئيسية</a>
+    <a href="#" id="productsLink">المنتجات</a>
+    <a href="#" id="cartLink">السلة</a>
+    <a href="#" id="contactLink">تواصل معنا</a>
+</nav>
+
+<div id="homeSection" class="store-description">
+    <h2>Welcome to Nitro Store</h2>
+    <p>متجرنا يقدم لك أفضل المنتجات عبر الإنترنت بكل سهولة!</p>
+</div>
+
+<div id="productsSection" class="products" style="display:none;">
+    <div class="product-tabs">
+        <label for="categorySelect">اختر قسم:</label>
+        <select id="categorySelect">
+            <option value="شراء حسابات">شراء حسابات</option>
+            <option value="تأجير حسابات">تأجير حسابات</option>
+            <option value="شحن فيبوكس">شحن فيبوكس</option>
+        </select>
+        <div id="categoryInfo" class="category-info">أنت الآن في قسم: شراء حسابات</div>
+    </div>
+    <div id="productsContainer" class="products-grid"></div>
+    <div class="no-products" id="noProductsMessage" style="display:none;">لا يوجد منتجات الآن</div>
+</div>
+
+<div id="cartSection" class="cart" style="display:none;">
+    <h3>سلة المشتريات</h3>
+    <div id="cartItems"></div>
+    <p id="totalPrice"></p>
+    <button id="confirmOrderBtn">تأكيد الطلب</button>
+    <p id="confirmationMessage" style="display:none; color: green; margin-top: 10px;">تم استلام طلبك، سيتم التواصل معك</p>
+
+    <div id="contactInfoSection" style="display: none;">
+        <input type="text" id="discordUser" placeholder="اسم مستخدم ديسكورد (اختياري)" /><br>
+        <input type="text" id="facebookUser" placeholder="اسم مستخدم فيسبوك (اختياري)" /><br>
+        <input type="text" id="phoneNumber" placeholder="رقم الجوال (إجباري)" required /><br>
+        <button id="submitOrderBtn">إرسال الطلب</button>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
+    import { getFirestore, collection, getDocs, addDoc, Timestamp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAGCYyAio3FG6B7R1KGt749gFm4C_u2ank",
+        authDomain: "eyad-store1.firebaseapp.com",
+        projectId: "eyad-store1",
+        storageBucket: "eyad-store1.appspot.com",
+        messagingSenderId: "385630644829",
+        appId: "1:385630644829:web:ac2e4a80a7d8afdf63fbb4",
+        measurementId: "G-B20P7HND34"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const menuBtn = document.getElementById('menuBtn');
+    const menu = document.getElementById('menu');
+    menuBtn.addEventListener('click', () => { menu.classList.toggle('open'); });
+
+    const homeLink = document.getElementById('homeLink');
+    const productsLink = document.getElementById('productsLink');
+    const cartLink = document.getElementById('cartLink');
+    const contactLink = document.getElementById('contactLink');
+    const homeSection = document.getElementById('homeSection');
+    const productsSection = document.getElementById('productsSection');
+    const cartSection = document.getElementById('cartSection');
+    const contactSection = document.getElementById('contactSection');
+    const noProductsMessage = document.getElementById('noProductsMessage');
+    const productsContainer = document.getElementById('productsContainer');
+
+    homeLink.addEventListener('click', () => showSection('home'));
+    productsLink.addEventListener('click', () => showSection('products'));
+    cartLink.addEventListener('click', () => showSection('cart'));
+    contactLink.addEventListener('click', () => showSection('contact'));
+
+    function showSection(section) {
+        homeSection.style.display = section === 'home' ? 'block' : 'none';
+        productsSection.style.display = section === 'products' ? 'block' : 'none';
+        cartSection.style.display = section === 'cart' ? 'block' : 'none';
+        contactSection.style.display = section === 'contact' ? 'block' : 'none';
+    }
+
+    const cartItems = [];
+    let totalPrice = 0;
+    let allProducts = [];
+
+    document.getElementById('categorySelect').addEventListener('change', (event) => {
+        const selectedCategory = event.target.value;
+        filterProducts(selectedCategory);
+        updateCategoryInfo(selectedCategory);
+    });
+
+    function updateCategoryInfo(category) {
+        const categoryInfo = document.getElementById('categoryInfo');
+        categoryInfo.textContent = `أنت الآن في قسم: ${category}`;
+    }
+
+    async function fetchProducts() {
+        const querySnapshot = await getDocs(collection(db, "products"));
+        allProducts = [];
+        querySnapshot.forEach(doc => { allProducts.push(doc.data()); });
+        filterProducts('شراء حسابات');
+    }
+
+    function filterProducts(category) {
+        const filtered = allProducts.filter(product => product.category === category);
+        displayProducts(filtered);
+    }
+
+    function displayProducts(products) {
+        if (products.length > 0) {
+            productsContainer.innerHTML = '';
+            products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.classList.add('product-card');
+                productCard.innerHTML = `
+                    <div class="product-image">
+                        <img src="${product.image}" alt="${product.name}">
+                    </div>
+                    <div class="content">
+                        <div class="name">${product.name}</div>
+                        <div class="price">${product.price} </div>
+                        <button class="add-to-cart-btn">إضافة إلى السلة</button>
+                    </div>`;
+                const addToCartBtn = productCard.querySelector('.add-to-cart-btn');
+                addToCartBtn.addEventListener('click', () => addToCart(product));
+                productsContainer.appendChild(productCard);
+            });
+            noProductsMessage.style.display = 'none';
+        } else {
+            productsContainer.innerHTML = '';
+            noProductsMessage.style.display = 'block';
+        }
+    }
+
+    function addToCart(product) {
+        const quantity = parseInt(prompt(`كم العدد المطلوب من ${product.name}?`), 10);
+        if (isNaN(quantity) || quantity <= 0) {
+            alert('الرجاء إدخال رقم صحيح للكمية!');
+            return;
+        }
+        const priceNum = parseFloat(product.price);
+        if (isNaN(priceNum)) {
+            alert('السعر غير صحيح!');
+            return;
+        }
+        for (let i = 0; i < quantity; i++) {
+            cartItems.push(product);
+            totalPrice += priceNum;
+        }
+        updateCart();
+    }
+
+    function updateCart() {
+        const cartItemsDiv = document.getElementById('cartItems');
+        cartItemsDiv.innerHTML = '';
+        const itemCounts = {};
+        cartItems.forEach(item => {
+            if (itemCounts[item.name]) {
+                itemCounts[item.name].quantity += 1;
+            } else {
+                itemCounts[item.name] = { price: parseFloat(item.price), currency: item.currency, quantity: 1 };
+            }
+        });
+        for (const [name, details] of Object.entries(itemCounts)) {
+            const totalItemPrice = details.price * details.quantity;
+            const itemDiv = document.createElement('div');
+            itemDiv.textContent = `${name} x${details.quantity} - ${totalItemPrice.toFixed(2)} ${details.currency}`;
+            cartItemsDiv.appendChild(itemDiv);
+        }
+        document.getElementById('totalPrice').textContent = `الإجمالي: ${totalPrice.toFixed(2)}`;
+    }
+
+    const confirmOrderBtn = document.getElementById('confirmOrderBtn');
+    confirmOrderBtn.addEventListener('click', () => {
+        document.getElementById('contactInfoSection').style.display = 'block';
+    });
+
+    const submitOrderBtn = document.getElementById('submitOrderBtn');
+    submitOrderBtn.addEventListener('click', async () => {
+        const discordUser = document.getElementById('discordUser').value;
+        const facebookUser = document.getElementById('facebookUser').value;
+        const phoneNumber = document.getElementById('phoneNumber').value;
+
+        if (!phoneNumber) {
+            alert('الرجاء إدخال رقم الجوال');
+            return;
+        }
+
+        await addDoc(collection(db, "orders"), {
+            items: cartItems,
+            totalPrice: totalPrice,
+            phoneNumber: phoneNumber,
+            discordUser: discordUser || "غير محدد",
+            facebookUser: facebookUser || "غير محدد",
+            timestamp: Timestamp.now()
+        });
+
+        document.getElementById('confirmationMessage').style.display = 'block';
+        cartItems.length = 0;
+        totalPrice = 0;
+        updateCart();
+        document.getElementById('contactInfoSection').style.display = 'none';
+    });
+
+    fetchProducts();
+</script>
+
+<footer style="text-align: center; padding: 20px; background-color: #f0f0f0;">
+    <img src="store-logo.png" alt="صورة المتجر" style="max-width: 150px; height: auto;">
+    <p style="margin-top: 10px;">جميع الحقوق محفوظة &copy; Nitro Store</p>
+</footer>
+</body>
+</html>
