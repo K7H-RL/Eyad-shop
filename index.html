@@ -2,17 +2,18 @@
 <html lang="ar">
 <head>
     <!-- Open Graph -->
-<meta property="og:title" content="nitro store">
-<meta property="og:description" content="مرحبا بك في نيترو ستور - بيع حسابات وشحن فيبوكس وأكثر!">
-<meta property="og:image" content="https://k7h-rl.github.io/Eyad-shop/store-logo.png">
-<meta property="og:url" content="https://k7h-rl.github.io/Eyad-shop/">
-<meta property="og:type" content="website">
+    <meta property="og:title" content="nitro store">
+    <meta property="og:description" content="مرحبا بك في نيترو ستور - بيع حسابات وشحن فيبوكس وأكثر!">
+    <meta property="og:image" content="https://k7h-rl.github.io/Eyad-shop/store-logo.png">
+    <meta property="og:url" content="https://k7h-rl.github.io/Eyad-shop/">
+    <meta property="og:type" content="website">
 
-<!-- Twitter Card -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Nitro store">
-<meta name="twitter:description" content="مرحبا بك في نيترو ستور - بيع حسابات وشحن فيبوكس وأكثر!">
-<meta name="twitter:image" content="https://k7h-rl.github.io/Eyad-shop/store-logo.png">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Nitro store">
+    <meta name="twitter:description" content="مرحبا بك في نيترو ستور - بيع حسابات وشحن فيبوكس وأكثر!">
+    <meta name="twitter:image" content="https://k7h-rl.github.io/Eyad-shop/store-logo.png">
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nitro Store</title>
@@ -35,7 +36,6 @@
 <div id="homeSection" class="store-description">
     <h2>Welcome to Nitro Store</h2>
     <p>متجرنا يقدم لك أفضل المنتجات عبر الإنترنت بكل سهولة!</p>
-    <!-- زر الانتقال للمنتجات -->
     <button id="goToProductsBtn" style="
         background-color: #333;
         color: white;
@@ -80,6 +80,18 @@
     </div>
 </div>
 
+<div id="contactSection" style="display:none; text-align:center; padding:20px;">
+    <h3>تواصل معنا</h3>
+    <p style="display: flex; justify-content: space-between; direction: rtl; margin: 10px 0;">
+        <span>ديسكورد:</span>
+        <a href="https://discord.com/users/eyad.elrashidy" target="_blank">@eyad.elrashidy</a>
+    </p>
+    <p style="display: flex; justify-content: space-between; direction: rtl; margin: 10px 0;">
+        <span>فيسبوك:</span>
+        <a href="https://www.facebook.com/share/12JJ7LdosTR/?mibextid=qi2Omg" target="_blank">رابط صفحتنا</a>
+    </p>
+</div>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
     import { getFirestore, collection, getDocs, addDoc, Timestamp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js";
@@ -117,7 +129,6 @@
     cartLink.addEventListener('click', () => showSection('cart'));
     contactLink.addEventListener('click', () => showSection('contact'));
 
-    // الزر الجديد
     const goToProductsBtn = document.getElementById('goToProductsBtn');
     goToProductsBtn.addEventListener('click', () => showSection('products'));
 
